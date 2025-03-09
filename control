@@ -1,11 +1,10 @@
 Package: com.huami.dyyy
-Name: DYYY
-Version: 2.1-2
-Description: 仅供学习交流，请在 24 小时内自觉删除。
-Homepage: https://github.com/huami1314/DYYY
+Name: 抖音魔术师
+Version: 2.1-3
+Description: 基于 DYYY v2.1-2 定制，抖音的UI调整插件！仅供学习交流，请在 24 小时内自觉删除。
 Section: Tweaks
 Depends: firmware (>= 5.0), mobilesubstrate
-Priority: optional
 Maintainer: huami
 Author: huami
 Architecture: iphoneos-arm
+

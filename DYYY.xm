@@ -9,6 +9,7 @@
 #import <objc/runtime.h>
 #import "CityManager.h"
 #import "AwemeHeaders.h"
+#import "CustomMenuView.h"
 
 static UIWindow * getActiveWindow(void) {
     if (@available(iOS 15.0, *)) {
@@ -354,78 +355,69 @@ void downloadAllImages(NSMutableArray *imageURLs) {
 }
 %end
 
-%group DYYYSettingsGesture
+@interface UIViewController ()
+- (void)initLongPressGess; 
+@end
 
-%hook UIWindow
-- (instancetype)initWithFrame:(CGRect)frame {
-    UIWindow *window = %orig(frame);
-    if (window) {
-        UILongPressGestureRecognizer *doubleFingerLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleFingerLongPressGesture:)];
-        doubleFingerLongPressGesture.numberOfTouchesRequired = 2;
-        [window addGestureRecognizer:doubleFingerLongPressGesture];
+%hook UIViewController
+
+- (void)viewDidLoad {
+    %orig;
+
+    [self initLongPressGess];
+
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"Slideleftback"]) {
+        return; // 开关未开启就不添加手势
     }
-    return window;
-}
 
-%new
-- (void)handleDoubleFingerLongPressGesture:(UILongPressGestureRecognizer *)gesture {
-    if (gesture.state == UIGestureRecognizerStateBegan) {
-        UIViewController *rootViewController = self.rootViewController;
-        if (rootViewController) {
-            UIViewController *settingVC = [[DYYYSettingViewController alloc] init];
-            
-            if (settingVC) {
-                BOOL isIPad = UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad;
-                if (@available(iOS 15.0, *)) {
-                    if (!isIPad) {
-                        settingVC.modalPresentationStyle = UIModalPresentationPageSheet;
-                    } else {
-                        settingVC.modalPresentationStyle = UIModalPresentationFullScreen;
-                    }
-                } else {
-                    settingVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    if (self.navigationController && self.navigationController.viewControllers.count > 1) {
+
+        BOOL hasRightEdgePan = NO;
+        for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
+            if ([gesture isKindOfClass:[UIScreenEdgePanGestureRecognizer class]]) {
+                UIScreenEdgePanGestureRecognizer *edgeGesture = (UIScreenEdgePanGestureRecognizer *)gesture;
+                if (edgeGesture.edges == UIRectEdgeRight) {
+                    hasRightEdgePan = YES;
+                    break;
                 }
-                
-                if (settingVC.modalPresentationStyle == UIModalPresentationFullScreen) {
-                    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeSystem];
-                    [closeButton setTitle:@"关闭" forState:UIControlStateNormal];
-                    closeButton.translatesAutoresizingMaskIntoConstraints = NO;
-                    
-                    [settingVC.view addSubview:closeButton];
-                    
-                    [NSLayoutConstraint activateConstraints:@[
-                        [closeButton.trailingAnchor constraintEqualToAnchor:settingVC.view.trailingAnchor constant:-10],
-                        [closeButton.topAnchor constraintEqualToAnchor:settingVC.view.topAnchor constant:40],
-                        [closeButton.widthAnchor constraintEqualToConstant:80],
-                        [closeButton.heightAnchor constraintEqualToConstant:40]
-                    ]];
-                    
-                    [closeButton addTarget:self action:@selector(closeSettings:) forControlEvents:UIControlEventTouchUpInside];
-                }
-                
-                UIView *handleBar = [[UIView alloc] init];
-                handleBar.backgroundColor = [UIColor whiteColor];
-                handleBar.layer.cornerRadius = 2.5;
-                handleBar.translatesAutoresizingMaskIntoConstraints = NO;
-                [settingVC.view addSubview:handleBar];
-                
-                [NSLayoutConstraint activateConstraints:@[
-                    [handleBar.centerXAnchor constraintEqualToAnchor:settingVC.view.centerXAnchor],
-                    [handleBar.topAnchor constraintEqualToAnchor:settingVC.view.topAnchor constant:8],
-                    [handleBar.widthAnchor constraintEqualToConstant:40],
-                    [handleBar.heightAnchor constraintEqualToConstant:5]
-                ]];
-                
-                [rootViewController presentViewController:settingVC animated:YES completion:nil];
             }
+        }
+
+        if (!hasRightEdgePan) {
+            UIScreenEdgePanGestureRecognizer *rightEdgePan = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(handleRightEdgePan:)];
+            rightEdgePan.edges = UIRectEdgeRight;
+            [self.view addGestureRecognizer:rightEdgePan];
         }
     }
 }
 
 %new
-- (void)closeSettings:(UIButton *)button {
-    [button.superview.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+- (void)handleRightEdgePan:(UIScreenEdgePanGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        if (self.navigationController && self.navigationController.viewControllers.count > 1) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
 }
+
+%new
+- (void)initLongPressGess {
+    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongsPresss:)];
+    longPressGesture.minimumPressDuration = 1.0; // 长按时间设置为1秒
+    longPressGesture.numberOfTouchesRequired = 2; // 三指
+    [self.view addGestureRecognizer:longPressGesture];
+}
+
+// 三指长按手势处理方法
+%new
+- (void)handleLongsPresss:(UILongPressGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+
+    [CustomMenuView showMenu];
+
+    }
+}
+
 %end
 
 %hook AWESettingsViewModel
@@ -481,8 +473,6 @@ void downloadAllImages(NSMutableArray *imageURLs) {
 
 %end
 
-
-%end
 
 %hook AWEFeedLiveMarkView
 - (void)setHidden:(BOOL)hidden {
