@@ -121,10 +121,18 @@
             textColor = [DYYYManager colorWithHexString:@"random"];
             self.layer.shadowOffset = CGSizeZero;
             self.layer.shadowOpacity = 0.0;
+            self.layer.shadowRadius = 0.0;
         } else if ([danmuColor hasPrefix:@"#"]) {
             textColor = [DYYYManager colorWithHexString:danmuColor];
             self.layer.shadowOffset = CGSizeZero;
             self.layer.shadowOpacity = 0.0;
+            self.layer.shadowRadius = 0.0;
+        } else {
+            textColor = [DYYYManager colorWithHexString:@"#FFFFFF"];
+            self.layer.shadowColor = [UIColor blackColor].CGColor;
+            self.layer.shadowOffset = CGSizeMake(1.0, 1.0);
+            self.layer.shadowOpacity = 0.8;
+            self.layer.shadowRadius = 1.0;
         }
     }
 
@@ -141,6 +149,8 @@
             arg1 = [DYYYManager colorWithHexString:@"random"];
         } else if ([danmuColor hasPrefix:@"#"]) {
             arg1 = [DYYYManager colorWithHexString:danmuColor];
+        } else {
+            arg1 = [DYYYManager colorWithHexString:@"#FFFFFF"];
         }
     }
 
@@ -239,7 +249,7 @@
         AWESettingItemModel *dyyyItem = [[%c(AWESettingItemModel) alloc] init];
         dyyyItem.identifier = @"DYYY";
         dyyyItem.title = @"DYYY";
-        dyyyItem.detail = @"v2.1-6";
+        dyyyItem.detail = @"v2.1-7";
         dyyyItem.type = 0;
         dyyyItem.iconImageName = @"noticesettting_like";
         dyyyItem.cellType = 26;
@@ -1408,7 +1418,7 @@
             AWELongPressPanelBaseViewModel *downloadViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             downloadViewModel.awemeModel = self.awemeModel;
             downloadViewModel.actionType = 666;
-            downloadViewModel.duxIconName = @"ic_circledown_filled_20";
+            downloadViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             downloadViewModel.describeString = @"保存视频";
             
             downloadViewModel.action = ^{
@@ -1434,7 +1444,7 @@
             AWELongPressPanelBaseViewModel *coverViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             coverViewModel.awemeModel = self.awemeModel;
             coverViewModel.actionType = 667;
-            coverViewModel.duxIconName = @"ic_circledown_filled_20";
+            coverViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             coverViewModel.describeString = @"保存封面";
             
             coverViewModel.action = ^{
@@ -1458,7 +1468,7 @@
         AWELongPressPanelBaseViewModel *audioViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
         audioViewModel.awemeModel = self.awemeModel;
         audioViewModel.actionType = 668;
-        audioViewModel.duxIconName = @"ic_circledown_filled_20";
+        audioViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
         audioViewModel.describeString = @"保存音频";
         
         audioViewModel.action = ^{
@@ -1480,7 +1490,7 @@
             AWELongPressPanelBaseViewModel *imageViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             imageViewModel.awemeModel = self.awemeModel;
             imageViewModel.actionType = 669;
-            imageViewModel.duxIconName = @"ic_circledown_filled_20";
+            imageViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             imageViewModel.describeString = @"保存当前图片";
             
             imageViewModel.action = ^{
@@ -1510,7 +1520,7 @@
                 AWELongPressPanelBaseViewModel *allImagesViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
                 allImagesViewModel.awemeModel = self.awemeModel;
                 allImagesViewModel.actionType = 670;
-                allImagesViewModel.duxIconName = @"ic_circledown_filled_20";
+                allImagesViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
                 allImagesViewModel.describeString = @"保存所有图片";
                 
                 allImagesViewModel.action = ^{
@@ -1553,6 +1563,24 @@
         };
         
         [viewModels addObject:copyText];
+
+        // 新增复制分享链接
+        AWELongPressPanelBaseViewModel *copyShareLink = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
+        copyShareLink.awemeModel = self.awemeModel;
+        copyShareLink.actionType = 672;
+        copyShareLink.duxIconName = @"ic_share_outlined";
+        copyShareLink.describeString = @"复制分享链接";
+        
+        copyShareLink.action = ^{
+            NSString *shareLink = [self.awemeModel valueForKey:@"shareURL"];
+            [[UIPasteboard generalPasteboard] setString:shareLink];
+            [DYYYManager showToast:@"分享链接已复制到剪贴板"];
+            
+            AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
+            [panelManager dismissWithAnimation:YES completion:nil];
+        };
+        
+        [viewModels addObject:copyShareLink];
     }
     
     newGroupModel.groupArr = viewModels;
@@ -1586,7 +1614,7 @@
             AWELongPressPanelBaseViewModel *downloadViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             downloadViewModel.awemeModel = self.awemeModel;
             downloadViewModel.actionType = 666;
-            downloadViewModel.duxIconName = @"ic_circledown_filled_20";
+            downloadViewModel.duxIconName = @"ic";
             downloadViewModel.describeString = @"保存视频";
             
             downloadViewModel.action = ^{
@@ -1612,7 +1640,7 @@
             AWELongPressPanelBaseViewModel *coverViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             coverViewModel.awemeModel = self.awemeModel;
             coverViewModel.actionType = 667;
-            coverViewModel.duxIconName = @"ic_circledown_filled_20";
+            coverViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             coverViewModel.describeString = @"保存封面";
             
             coverViewModel.action = ^{
@@ -1636,7 +1664,7 @@
         AWELongPressPanelBaseViewModel *audioViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
         audioViewModel.awemeModel = self.awemeModel;
         audioViewModel.actionType = 668;
-        audioViewModel.duxIconName = @"ic_circledown_filled_20";
+        audioViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
         audioViewModel.describeString = @"保存音频";
         
         audioViewModel.action = ^{
@@ -1658,7 +1686,7 @@
             AWELongPressPanelBaseViewModel *imageViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             imageViewModel.awemeModel = self.awemeModel;
             imageViewModel.actionType = 669;
-            imageViewModel.duxIconName = @"ic_circledown_filled_20";
+            imageViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             imageViewModel.describeString = @"保存当前图片";
             
             imageViewModel.action = ^{
@@ -1688,7 +1716,7 @@
                 AWELongPressPanelBaseViewModel *allImagesViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
                 allImagesViewModel.awemeModel = self.awemeModel;
                 allImagesViewModel.actionType = 670;
-                allImagesViewModel.duxIconName = @"ic_circledown_filled_20";
+                allImagesViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
                 allImagesViewModel.describeString = @"保存所有图片";
                 
                 allImagesViewModel.action = ^{
@@ -1731,6 +1759,25 @@
         };
         
         [viewModels addObject:copyText];
+        
+        // 新增复制分享链接
+        AWELongPressPanelBaseViewModel *copyShareLink = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
+        copyShareLink.awemeModel = self.awemeModel;
+        copyShareLink.actionType = 672;
+        copyShareLink.duxIconName = @"ic_share_outlined";
+        copyShareLink.describeString = @"复制分享链接";
+        
+        copyShareLink.action = ^{
+            NSString *shareLink = [self.awemeModel valueForKey:@"shareURL"];
+            [[UIPasteboard generalPasteboard] setString:shareLink];
+            [DYYYManager showToast:@"分享链接已复制到剪贴板"];
+            
+            AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
+            [panelManager dismissWithAnimation:YES completion:nil];
+        };
+        
+        [viewModels addObject:copyShareLink];
+    
     }
     
     newGroupModel.groupArr = viewModels;
