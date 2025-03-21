@@ -1532,13 +1532,13 @@
                 allImagesViewModel.action = ^{
                     AWEAwemeModel *awemeModel = self.awemeModel;
                     NSMutableArray *imageURLs = [NSMutableArray array];
-                    
+
                     for (AWEImageAlbumImageModel *imageModel in awemeModel.albumImages) {
                         if (imageModel.urlList.count > 0) {
                             [imageURLs addObject:imageModel.urlList.firstObject];
                         }
                     }
-                    
+
                     if (imageURLs.count > 0) {
                         [DYYYManager downloadAllImages:imageURLs];
                     }
@@ -1620,7 +1620,7 @@
             AWELongPressPanelBaseViewModel *downloadViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             downloadViewModel.awemeModel = self.awemeModel;
             downloadViewModel.actionType = 666;
-            downloadViewModel.duxIconName = @"ic";
+            downloadViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             downloadViewModel.describeString = @"保存视频";
             
             downloadViewModel.action = ^{
@@ -1694,7 +1694,7 @@
             imageViewModel.actionType = 669;
             imageViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             imageViewModel.describeString = @"保存当前图片";
-            
+
             imageViewModel.action = ^{
                 AWEAwemeModel *awemeModel = self.awemeModel;
                 AWEImageAlbumImageModel *currentImageModel = nil;
@@ -1724,7 +1724,7 @@
                 allImagesViewModel.actionType = 670;
                 allImagesViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
                 allImagesViewModel.describeString = @"保存所有图片";
-                
+
                 allImagesViewModel.action = ^{
                     AWEAwemeModel *awemeModel = self.awemeModel;
                     NSMutableArray *imageURLs = [NSMutableArray array];
