@@ -1419,7 +1419,6 @@
     NSMutableArray *viewModels = [NSMutableArray array];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressDownload"]) {
-
         if (self.awemeModel.awemeType != 68) {
             AWELongPressPanelBaseViewModel *downloadViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
             downloadViewModel.awemeModel = self.awemeModel;
@@ -1498,7 +1497,6 @@
             imageViewModel.actionType = 669;
             imageViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
             imageViewModel.describeString = @"保存当前图片";
-            
             imageViewModel.action = ^{
                 AWEAwemeModel *awemeModel = self.awemeModel;
                 AWEImageAlbumImageModel *currentImageModel = nil;
@@ -1508,6 +1506,7 @@
                 } else {
                     currentImageModel = awemeModel.albumImages.firstObject;
                 }
+
                 
                 if (currentImageModel && currentImageModel.urlList.count > 0) {
                     NSURL *url = [NSURL URLWithString:currentImageModel.urlList.firstObject];
@@ -1516,6 +1515,7 @@
                     }];
                 }
                 
+
                 AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
                 [panelManager dismissWithAnimation:YES completion:nil];
             };
@@ -1587,6 +1587,7 @@
         };
         
         [viewModels addObject:copyShareLink];
+
     }
     
     newGroupModel.groupArr = viewModels;
